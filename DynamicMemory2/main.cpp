@@ -1,20 +1,26 @@
 #include<iostream>
 using namespace std;
 #define tab "\t"
-void fillrand(int arr[], int n);
-void FillRand(int** arr, int rows, int cols);
-
-void print(int arr[], int n);
-void Print(int** arr, int rows, int cols);
-
-int* push_back(int arr[], int& n, int v);
-int* push_front(int arr[], int& n, int v);
-
-int* pop_back(int arr[], int& n);
-int* pop_front(int arr[], int& n);
+void FillRand(int arr[], int n);
+void FillRand(char arr[], int n);
+void FillRand(double arr[], const int n, int minRand = 0, int maxRand = 100);
+void FillRand(int** arr, const int n, int rows=0, int cols=100);
+template<typename T>
+void Print(T arr[], int n);
+template<typename T>
+void Print(T** arr, int rows, int cols);
+template<typename T> 
+T* push_back(T arr[], int& n, T v);
+template<typename T>
+T* push_front(T arr[], int& n, T v);
+template<typename T> 
+T* pop_back(T arr[], int& n);
+template<typename T>
+T* pop_front(T arr[], int& n);
 
 int* insert(int arr[], int& n, int indx, int val);
-int* erase(int arr[], int& n, int indx, int val);
+template<typename T>
+T* erase(T arr[], int& n, int indx, T val);
 
 int** allocate(int const rows, int const cols);
 void clear(int** arr, int rows);
@@ -36,48 +42,53 @@ int** pop_col_front(int** arr, int rows, int& cols);
 int** erase_col(int** arr, int rows, int& cols, int dcol);
 
 void push_col_back(int** arr, const int rows, int& cols);
+
+#define DYNAMIC_MEMORY_1
+//#define DYNAMIC_MEMORY_2
+
 void main()
 {
-#ifdef dynamic memory 1 
+#ifdef DYNAMIC_MEMORY_1
 	setlocale(LC_ALL, "Russia");
 	int n;
 	cout << "Enter the size of list: "; cin >> n;
-	int* arr = new int[n];
-	fillrand(arr, n);
-	print(arr, n);
-	int value; cout << "Enter new element: "; cin >> value;
+	typedef char DataType;
+	DataType* arr = new DataType[n];
+	FillRand(arr, n);
+	Print(arr, n);
+	DataType value; cout << "Enter new element: "; cin >> value;
 	arr = push_back(arr, n, value);
-	print(arr, n);
+	Print(arr, n);
 	arr = push_front(arr, n, value);
-	print(arr, n);
+	Print(arr, n);
 	//arr = pop_back(arr, n);
-	print(arr, n);
+	Print(arr, n);
 	arr = pop_front(arr, n);
-	print(arr, n);
+	Print(arr, n);
 	delete[] arr;
 #endif 
-#ifdef dynamic memory 2
+#ifdef DYNAMIC_MEMORY_2
 	int n;
 	cout << "Enter the size of list: "; cin >> n;
 	int* arr = new int[n];
-	fillrand(arr, n);
+	Fillrand(arr, n);
 	int v, indx, indx2;
 	cout << "Enter the numb of el: "; cin >> indx;
 	cout << "Enter the value: "; cin >> v;
 	arr = insert(arr, n, indx, v);
-	print(arr, n);
+	Print(arr, n);
 	cout << "Enter the numb of el to delete: "; cin >> indx2;
 	arr = erase(arr, n, indx2, v);
-	print(arr, n);
+	Print(arr, n);
 #endif 
-	int rows, cols;
-	cout << "Enter the size of list: "; cin >> rows >> cols;
-	int** arr = allocate(rows, cols);
-	FillRand(arr, rows, cols);
-	Print(arr, rows, cols);
+	//int rows, cols;
+	//cout << "Enter the size of list: "; cin >> rows >> cols;
+	//int** arr = allocate(rows, cols);
+	//FillRand(arr, rows, cols);
+	//Print(arr, rows, cols);
 
-	//dblarr = push_row_back(dblarr, rows,cols);
-	arr = push_row_front(arr, rows, cols);
+	////dblarr = push_row_back(dblarr, rows,cols);
+	//arr = push_row_front(arr, rows, cols);
 
 	//arr = pop_row_back(arr, rows, cols);
 	//Print(arr, rows, cols);
@@ -102,23 +113,42 @@ void main()
 
 	//cout << "Enter the numb of column to delete: "; cin >> dcol;
 	//	dblarr = erase_col(dblarr, rows, cols,dcol);
-	push_col_back(arr, rows, cols);
+
+	/*push_col_back(arr, rows, cols);
 	Print(arr, rows, cols);
-	clear(arr, rows);
+	clear(arr, rows);*/
 }
-void fillrand(int arr[], int n)
+void FillRand(int arr[], int n)
 {
 	for (int i = 0; i < n; i++)
 	{
-		*(arr + i) = rand() % 100;
+		*(arr + i) = rand();
 	}
 }
-void FillRand(int** arr, int rows, int cols)
+void FillRand(char arr[], const int n)
+{
+	for (int i = 0; i < n; i++)
+	{
+		*(arr + i) = rand();
+	}
+}
+void FillRand(double arr[],const int n, int minRand,int maxRand)
+{
+	minRand *= 100;
+	maxRand *= 100; 
+	for (int i = 0; i < n; i++)
+	{
+		*(arr + i) = rand() % (maxRand-minRand)+minRand;
+		*(arr + i) /= 100; 
+	}
+}
+void FillRand(int** arr, const int n, int rows, int cols)
 {
 	for (int i = 0; i < rows; i++)
 		for (int j = 0; j < cols; j++)arr[i][j] = rand() % 100;
 }
-void print(int arr[], int n)
+template<typename T>
+void Print(T arr[], const int n)
 {
 	for (int i = 0; i < n; i++)
 	{
@@ -126,7 +156,8 @@ void print(int arr[], int n)
 	}
 	cout << endl;
 }
-void Print(int** arr, int rows, int cols)
+template<typename T>
+void Print(T** arr,const int rows,const int cols)
 {
 	for (int i = 0; i < rows; i++)
 	{
@@ -136,41 +167,44 @@ void Print(int** arr, int rows, int cols)
 	}
 	cout << endl;
 }
-
-int* push_back(int arr[], int& n, int v)
+template<typename T> 
+T* push_back(T arr[], int& n, T v)
 {
 	//create a reverse array with memory we need
-	int* arr1 = new int[n + 1];
-	for (int i = 0; i < n; i++)arr1[i] = arr[i];
+	T* buffer = new T[n + 1];
+	for (int i = 0; i < n; i++)buffer[i] = arr[i];
 	//arr1[n] = value;
 	delete[] arr;
 	//change address of old massive with address of new massive arr1
-	arr = arr1;
+	arr = buffer;
 	//now we got more place, exactly for 1 new element
 	arr[n] = v;
 	n++;
 	return arr;
 }
-int* push_front(int arr[], int& n, int v)
+template<typename T> 
+T* push_front(T arr[], int& n, T v)
 {
-	int* buffer = new int[n + 1];
+	T* buffer = new T[n + 1];
 	for (int i = 0; i < n; i++)buffer[i + 1] = arr[i];
 	delete[] arr;
 	buffer[0] = v;
 	n++;
 	return buffer;
 }
-
-int* pop_back(int arr[], int& n)
+template<typename T>
+T* pop_back(T arr[], int& n)
 {
-	int* buffer = new int[--n];
+	T* buffer = new T[--n];
 	for (int i = 0; i < n; i++)buffer[i] = arr[i];
 	delete[] arr;
 	return buffer;
 }
-int* pop_front(int arr[], int& n)
+
+template<typename T>
+T* pop_front(T arr[], int& n)
 {
-	int* buffer = new int[--n];
+	T* buffer = new T[--n];
 	for (int i = 0; i < n; i++)buffer[i] = arr[i + 1];
 	delete[] arr;
 	return buffer;
@@ -188,9 +222,10 @@ int* insert(int arr[], int& n, int indx, int val)
 	buffer[indx] = val;
 	return buffer;
 }
-int* erase(int arr[], int& n, int indx, int val)
+template<typename T>
+T* erase(T arr[], int& n, int indx, int val)
 {
-	int* buffer = new int[--n];
+	T* buffer = new T[--n];
 	for (int i = 0; i < n; i++)
 	{
 		if (i >= indx)buffer[i] = arr[i + 1];
